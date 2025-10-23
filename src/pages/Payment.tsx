@@ -11,11 +11,11 @@ import { toast } from 'sonner';
 const Payment = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { match, category } = location.state || {};
+  const { match, selection, selectedGallery, totalPrice } = location.state || {};
   const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
 
   useEffect(() => {
-    if (!match || !category) {
+    if (!match || !selectedGallery || !selection) {
       navigate('/matches');
       return;
     }
@@ -33,9 +33,9 @@ const Payment = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [match, category, navigate]);
+  }, [match, selectedGallery, selection, navigate]);
 
-  if (!match || !category) {
+  if (!match || !selectedGallery || !selection) {
     return null;
   }
 
@@ -47,7 +47,7 @@ const Payment = () => {
     const ticketId = Math.random().toString(36).substring(7);
     toast.success('Payment successful!');
     navigate(`/ticket/${ticketId}`, { 
-      state: { match, category } 
+      state: { match, selection, selectedGallery, totalPrice } 
     });
   };
 
@@ -159,16 +159,33 @@ const Payment = () => {
                     <div className="font-semibold">{match.venue}</div>
                   </div>
 
-                  <div className="border-t border-white/10 pt-4">
-                    <div className="text-sm text-muted-foreground mb-1">Seat Category</div>
-                    <div className="font-semibold">{category.name}</div>
+                  <div className="border-t border-white/10 pt-4 space-y-3">
+                    <div className="text-sm font-semibold mb-2">Seat Details</div>
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <div className="text-xs text-muted-foreground mb-1">Gallery</div>
+                        <div className="font-medium">{selectedGallery.name}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground mb-1">Level</div>
+                        <div className="font-medium">{selection.level}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground mb-1">Block</div>
+                        <div className="font-medium">{selection.block}</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground mb-1">Tickets</div>
+                        <div className="font-medium">{selection.tickets}</div>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="border-t border-white/10 pt-4">
                     <div className="flex justify-between items-center text-lg">
                       <span className="font-semibold">Total Amount</span>
                       <span className="text-2xl font-bold gradient-text">
-                        ৳{category.price}
+                        ৳{totalPrice.toFixed(2)}
                       </span>
                     </div>
                   </div>

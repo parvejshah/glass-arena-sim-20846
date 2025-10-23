@@ -55,7 +55,7 @@ const Matches = () => {
         {comingSoonMatches.length > 0 && (
           <section className="mb-16">
             <h2 className="text-2xl font-bold mb-6">Coming Soon</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {comingSoonMatches.map((match) => (
                 <MatchCard 
                   key={match.id} 
@@ -71,7 +71,7 @@ const Matches = () => {
         {/* Upcoming Matches Section */}
         <section>
           <h2 className="text-2xl font-bold mb-6">Upcoming Matches</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {upcomingMatches.map((match) => (
               <MatchCard 
                 key={match.id} 

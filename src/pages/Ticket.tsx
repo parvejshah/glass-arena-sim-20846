@@ -8,9 +8,9 @@ const Ticket = () => {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { match, category } = location.state || {};
+  const { match, selection, selectedGallery, totalPrice } = location.state || {};
 
-  if (!match || !category) {
+  if (!match || !selectedGallery || !selection) {
     navigate('/matches');
     return null;
   }
@@ -74,12 +74,24 @@ const Ticket = () => {
                   <div className="font-semibold">{match.stadium}</div>
                 </div>
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">Category</div>
-                  <div className="font-semibold">{category.name}</div>
+                  <div className="text-sm text-muted-foreground mb-1">Gallery</div>
+                  <div className="font-semibold">{selectedGallery.name}</div>
                 </div>
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">Price</div>
-                  <div className="font-semibold text-lg gradient-text">৳{category.price}</div>
+                  <div className="text-sm text-muted-foreground mb-1">Level</div>
+                  <div className="font-semibold">{selection.level}</div>
+                </div>
+                <div>
+                  <div className="text-sm text-muted-foreground mb-1">Block</div>
+                  <div className="font-semibold">{selection.block}</div>
+                </div>
+                <div>
+                  <div className="text-sm text-muted-foreground mb-1">Tickets</div>
+                  <div className="font-semibold">{selection.tickets}</div>
+                </div>
+                <div className="col-span-2">
+                  <div className="text-sm text-muted-foreground mb-1">Total Amount</div>
+                  <div className="font-semibold text-2xl gradient-text">৳{totalPrice.toFixed(2)}</div>
                 </div>
               </div>
 
