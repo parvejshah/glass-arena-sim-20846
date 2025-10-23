@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Base colors */
+    --background: 222 28% 5%;
+    --foreground: 210 40% 98%;
+
+    /* Card & Surface */
+    --card: 0 0% 100% / 0.06;
+    --card-foreground: 210 40% 98%;
+
+    /* Primary - Deep Violet */
+    --primary: 250 87% 70%;
+    --primary-foreground: 210 40% 98%;
+    --primary-glow: 250 87% 80%;
+
+    /* Secondary - Electric Blue */
+    --secondary: 217 91% 60%;
+    --secondary-foreground: 210 40% 98%;
+
+    /* Accent - Cyan */
+    --accent: 187 100% 50%;
+    --accent-foreground: 222 28% 5%;
+
+    /* Muted */
+    --muted: 217 32% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    /* Success, Warning, Error */
+    --success: 142 76% 36%;
+    --warning: 48 96% 53%;
+    --error: 0 72% 51%;
+
+    /* Borders & Inputs */
+    --border: 0 0% 100% / 0.15;
+    --input: 0 0% 100% / 0.1;
+    --ring: 250 87% 70%;
+
+    --radius: 0.75rem;
+
+    /* Glass effect */
+    --glass-bg: 0 0% 100% / 0.06;
+    --glass-border: 0 0% 100% / 0.15;
+
+    /* Popover */
+    --popover: 222 28% 5%;
+    --popover-foreground: 210 40% 98%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    background: linear-gradient(to bottom, hsl(222 28% 5%), hsl(222 28% 7%), hsl(222 28% 5%));
+    min-height: 100vh;
+  }
+}
+
+@layer utilities {
+  .glass-card {
+    @apply bg-white/[0.06] backdrop-blur-xl border border-white/10 shadow-lg;
+  }
+
+  .glass-card-hover {
+    @apply glass-card hover:bg-white/[0.08] hover:shadow-[0_0_30px_rgba(108,99,255,0.3)] transition-all duration-300;
+  }
+
+  .gradient-primary {
+    @apply bg-gradient-to-br from-primary via-secondary to-accent;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary to-accent text-transparent bg-clip-text;
+  }
+
+  .glow-primary {
+    @apply shadow-[0_0_20px_rgba(108,99,255,0.5)];
+  }
+
+  .glow-accent {
+    @apply shadow-[0_0_20px_rgba(0,229,255,0.5)];
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
