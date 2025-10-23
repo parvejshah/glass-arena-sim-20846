@@ -125,7 +125,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({ galleries, selection, 
           <Button 
             onClick={onProceedToPayment}
             disabled={!selectedGallery}
-            className="w-full gradient-primary glow-primary"
+            className="w-full gradient-primary glow-primary hover-glow"
             size="lg"
           >
             Confirm and make payment

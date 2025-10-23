@@ -59,7 +59,7 @@ const Payment = () => {
         <Button 
           variant="ghost" 
           onClick={() => navigate(`/match/${match.id}`)}
-          className="mb-6"
+          className="mb-6 hover-lift"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Match
@@ -67,9 +67,9 @@ const Payment = () => {
 
         <div className="max-w-4xl mx-auto">
           {/* Timer Alert */}
-          <div className="glass-card rounded-xl p-4 mb-6 border-warning/50">
+          <div className="glass-card rounded-xl p-4 mb-6 border-warning/50 animate-fade-in">
             <div className="flex items-center justify-center gap-2 text-warning">
-              <Clock className="w-5 h-5" />
+              <Clock className="w-5 h-5 animate-pulse" />
               <span className="font-semibold">
                 Time remaining: {minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}
               </span>
@@ -78,7 +78,7 @@ const Payment = () => {
 
           <div className="grid lg:grid-cols-5 gap-8">
             {/* Payment Form */}
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-3 animate-slide-up">
               <div className="glass-card rounded-2xl p-8">
                 <h1 className="text-2xl font-bold mb-6 flex items-center gap-2">
                   <CreditCard className="w-6 h-6 text-accent" />
@@ -92,7 +92,7 @@ const Payment = () => {
                       id="cardName"
                       placeholder="John Doe"
                       required
-                      className="glass-card"
+                      className="glass-card transition-all duration-300 focus:shadow-[0_0_15px_rgba(108,99,255,0.3)]"
                     />
                   </div>
 
@@ -102,7 +102,7 @@ const Payment = () => {
                       id="cardNumber"
                       placeholder="1234 5678 9012 3456"
                       required
-                      className="glass-card"
+                      className="glass-card transition-all duration-300 focus:shadow-[0_0_15px_rgba(108,99,255,0.3)]"
                     />
                   </div>
 
@@ -113,7 +113,7 @@ const Payment = () => {
                         id="expiry"
                         placeholder="MM/YY"
                         required
-                        className="glass-card"
+                        className="glass-card transition-all duration-300 focus:shadow-[0_0_15px_rgba(108,99,255,0.3)]"
                       />
                     </div>
                     <div className="space-y-2">
@@ -122,14 +122,14 @@ const Payment = () => {
                         id="cvv"
                         placeholder="123"
                         required
-                        className="glass-card"
+                        className="glass-card transition-all duration-300 focus:shadow-[0_0_15px_rgba(108,99,255,0.3)]"
                       />
                     </div>
                   </div>
 
                   <Button 
                     type="submit"
-                    className="w-full gradient-primary glow-primary"
+                    className="w-full gradient-primary glow-primary hover-glow"
                     size="lg"
                   >
                     Confirm Payment
@@ -139,7 +139,7 @@ const Payment = () => {
             </div>
 
             {/* Order Summary */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-2 animate-slide-up" style={{ animationDelay: '0.1s', animationFillMode: 'both' }}>
               <div className="glass-card rounded-2xl p-6 sticky top-24">
                 <h2 className="text-xl font-bold mb-4">Order Summary</h2>
                 

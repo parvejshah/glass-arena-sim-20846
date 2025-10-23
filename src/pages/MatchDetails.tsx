@@ -118,14 +118,14 @@ const MatchDetails = () => {
         <Button 
           variant="ghost" 
           onClick={() => navigate('/matches')}
-          className="mb-6"
+          className="mb-6 hover-lift animate-fade-in"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Matches
         </Button>
 
         {/* Match Header */}
-        <div className="glass-card rounded-2xl p-8 mb-8">
+        <div className="glass-card rounded-2xl p-8 mb-8 animate-slide-up">
           <div className="flex flex-col lg:flex-row gap-8">
             <div className="flex-1">
               <div className="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl mb-6 flex items-center justify-center">
@@ -153,8 +153,8 @@ const MatchDetails = () => {
 
         <div className="grid lg:grid-cols-5 gap-8">
           {/* Interactive Stadium Map */}
-          <div className="lg:col-span-3">
-            <div className="glass-card rounded-2xl p-6 h-full">
+          <div className="lg:col-span-3 animate-slide-up">
+            <div className="glass-card rounded-2xl p-6 h-full hover-lift">
               <h2 className="text-2xl font-bold mb-6">Interactive Seat Layout</h2>
               <div className="w-full h-[500px] flex justify-center items-center">
                 <StadiumMap 
@@ -167,7 +167,7 @@ const MatchDetails = () => {
           </div>
 
           {/* Booking Form */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 animate-slide-up" style={{ animationDelay: '0.1s', animationFillMode: 'both' }}>
             <div className="glass-card rounded-2xl p-6 sticky top-24">
               <BookingForm 
                 galleries={galleryData}
