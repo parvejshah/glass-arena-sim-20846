@@ -1,12 +1,8 @@
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { useRef, useState, useEffect } from 'react';
-import { CheckCircle2, Download, QrCode, Loader2 } from 'lucide-react';
+import { CheckCircle2, Download, Printer } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
-import QRCode from 'qrcode';
 import { toast } from 'sonner';
 
 const Ticket = () => {
@@ -14,18 +10,6 @@ const Ticket = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { match, selection, selectedGallery, totalPrice } = location.state || {};
-  const ticketRef = useRef<HTMLDivElement>(null);
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
-
-  useEffect(() => {
-    if (match && id) {
-      const ticketCode = `BCB-${id?.toUpperCase()}`;
-      QRCode.toDataURL(ticketCode, { width: 300, margin: 2 })
-        .then(url => setQrCodeUrl(url))
-        .catch(err => console.error(err));
-    }
-  }, [match, id]);
 
   if (!match || !selectedGallery || !selection) {
     navigate('/matches');
@@ -34,39 +18,9 @@ const Ticket = () => {
 
   const ticketCode = `BCB-${id?.toUpperCase()}`;
 
-  const handleDownload = async () => {
-    if (!ticketRef.current) return;
-    
-    setIsDownloading(true);
-    toast.info('Generating your ticket PDF...');
-    
-    try {
-      const canvas = await html2canvas(ticketRef.current, {
-        scale: 2,
-        backgroundColor: '#0E0E10',
-        logging: false,
-      });
-      
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4',
-      });
-      
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`ticket-${ticketCode}.pdf`);
-      
-      toast.success('Ticket downloaded successfully!');
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      toast.error('Failed to download ticket. Please try again.');
-    } finally {
-      setIsDownloading(false);
-    }
+  const handlePrint = () => {
+    window.print();
+    toast.success('Opening print dialog...');
   };
 
   return (
@@ -87,7 +41,7 @@ const Ticket = () => {
           </div>
 
           {/* Ticket Card */}
-          <div ref={ticketRef} className="glass-card rounded-3xl p-8 mb-6 relative overflow-hidden animate-slide-up">
+          <div className="glass-card rounded-3xl p-8 mb-6 relative overflow-hidden animate-slide-up">
             <div className="absolute top-0 right-0 w-64 h-64 gradient-primary opacity-10 blur-3xl"></div>
             
             <div className="relative z-10 space-y-6">
@@ -142,21 +96,33 @@ const Ticket = () => {
                 </div>
               </div>
 
-              {/* Ticket Code & QR */}
+              {/* Ticket Code */}
               <div className="pt-6 border-t border-white/10">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="text-sm text-muted-foreground mb-1">Ticket Code</div>
-                    <div className="text-2xl font-bold font-mono gradient-text">
-                      {ticketCode}
-                    </div>
+                <div className="text-center">
+                  <div className="text-sm text-muted-foreground mb-2">Ticket Code</div>
+                  <div className="text-3xl font-bold font-mono gradient-text mb-4">
+                    {ticketCode}
                   </div>
-                  <div className="w-32 h-32 glass-card rounded-xl flex items-center justify-center p-2">
-                    {qrCodeUrl ? (
-                      <img src={qrCodeUrl} alt="Ticket QR Code" className="w-full h-full object-contain" />
-                    ) : (
-                      <QrCode className="w-24 h-24 text-muted-foreground animate-pulse" />
-                    )}
+                  <div className="w-32 h-32 mx-auto glass-card rounded-xl flex items-center justify-center">
+                    <svg className="w-24 h-24" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect width="100" height="100" fill="white" opacity="0.1"/>
+                      <rect x="10" y="10" width="10" height="10" fill="currentColor" opacity="0.7"/>
+                      <rect x="30" y="10" width="10" height="10" fill="currentColor" opacity="0.7"/>
+                      <rect x="50" y="10" width="10" height="10" fill="currentColor" opacity="0.7"/>
+                      <rect x="70" y="10" width="10" height="10" fill="currentColor" opacity="0.7"/>
+                      <rect x="10" y="30" width="10" height="10" fill="currentColor" opacity="0.7"/>
+                      <rect x="70" y="30" width="10" height="10" fill="currentColor" opacity="0.7"/>
+                      <rect x="10" y="50" width="10" height="10" fill="currentColor" opacity="0.7"/>
+                      <rect x="30" y="50" width="10" height="10" fill="currentColor" opacity="0.7"/>
+                      <rect x="50" y="50" width="10" height="10" fill="currentColor" opacity="0.7"/>
+                      <rect x="70" y="50" width="10" height="10" fill="currentColor" opacity="0.7"/>
+                      <rect x="10" y="70" width="10" height="10" fill="currentColor" opacity="0.7"/>
+                      <rect x="70" y="70" width="10" height="10" fill="currentColor" opacity="0.7"/>
+                      <rect x="10" y="80" width="10" height="10" fill="currentColor" opacity="0.7"/>
+                      <rect x="30" y="80" width="10" height="10" fill="currentColor" opacity="0.7"/>
+                      <rect x="50" y="80" width="10" height="10" fill="currentColor" opacity="0.7"/>
+                      <rect x="70" y="80" width="10" height="10" fill="currentColor" opacity="0.7"/>
+                    </svg>
                   </div>
                 </div>
               </div>
@@ -169,24 +135,14 @@ const Ticket = () => {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-4 animate-fade-in">
+          <div className="flex gap-4 animate-fade-in print:hidden">
             <Button 
-              onClick={handleDownload}
-              disabled={isDownloading}
+              onClick={handlePrint}
               className="flex-1 gradient-primary glow-primary hover-glow"
               size="lg"
             >
-              {isDownloading ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Generating PDF...
-                </>
-              ) : (
-                <>
-                  <Download className="w-4 h-4 mr-2" />
-                  Download Ticket
-                </>
-              )}
+              <Printer className="w-4 h-4 mr-2" />
+              Print Ticket
             </Button>
             <Button 
               onClick={() => navigate('/matches')}
@@ -201,6 +157,22 @@ const Ticket = () => {
       </div>
 
       <Footer />
+      
+      <style>{`
+        @media print {
+          body * {
+            visibility: hidden;
+          }
+          .container * {
+            visibility: visible;
+          }
+          .container {
+            position: absolute;
+            left: 0;
+            top: 0;
+          }
+        }
+      `}</style>
     </div>
   );
 };
