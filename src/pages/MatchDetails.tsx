@@ -103,13 +103,13 @@ const MatchDetails = () => {
   const handleBackFromSeatSelection = () => {
     setShowSeatSelection(false);
     setSelectedSeats([]);
-    // Scroll to stadium section
+    // Scroll to stadium section after animation completes
     setTimeout(() => {
       const stadiumSection = document.getElementById('stadium-section');
       if (stadiumSection) {
         stadiumSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
-    }, 100);
+    }, 400);
   };
 
   const handleConfirmSeats = (seatIds: string[], calculatedPrice: number, timeLeft: number) => {
