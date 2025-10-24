@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CountdownTimer from '@/components/CountdownTimer';
@@ -8,8 +9,10 @@ import { Button } from '@/components/ui/button';
 import { matchesData } from '@/data/matches';
 import { StadiumMap } from '@/components/seat-booking/StadiumMap';
 import { BookingForm } from '@/components/seat-booking/BookingForm';
+import { SeatSelectionView } from '@/components/seat-booking/SeatSelectionView';
 import { galleryData } from '@/data/galleryData';
 import type { Gallery, Selection } from '@/types/seatBooking';
+import { toast } from 'sonner';
 
 const MatchDetails = () => {
   const { id } = useParams();
@@ -26,6 +29,8 @@ const MatchDetails = () => {
   });
 
   const [totalPrice, setTotalPrice] = useState(0);
+  const [showSeatSelection, setShowSeatSelection] = useState(false);
+  const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
 
   useEffect(() => {
     const selectedGallery = galleryData.find(g => g.id === selection.galleryId);
@@ -91,6 +96,20 @@ const MatchDetails = () => {
 
   const handleGalleryClick = (galleryId: string, level: string) => {
     handleSelectionChange({ galleryId, level });
+    setShowSeatSelection(true);
+  };
+
+  const handleBackFromSeatSelection = () => {
+    setShowSeatSelection(false);
+    setSelectedSeats([]);
+  };
+
+  const handleConfirmSeats = (seatIds: string[], calculatedPrice: number) => {
+    setSelectedSeats(seatIds);
+    setSelection(prev => ({ ...prev, tickets: seatIds.length }));
+    setTotalPrice(calculatedPrice);
+    setShowSeatSelection(false);
+    toast.success(`${seatIds.length} seat(s) reserved! Complete booking within 5 minutes.`);
   };
 
   const handleProceedToPayment = () => {
@@ -112,77 +131,91 @@ const MatchDetails = () => {
 
   return (
     <div className="min-h-screen">
-      <Navbar />
-      
-      <div className="container mx-auto px-4 py-8">
-        <Button 
-          variant="ghost" 
-          onClick={() => navigate('/matches')}
-          className="mb-6 hover-lift animate-fade-in"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Matches
-        </Button>
+      <AnimatePresence mode="wait">
+        {showSeatSelection && selectedGallery ? (
+          <SeatSelectionView
+            key="seat-selection"
+            gallery={selectedGallery}
+            selectedLevel={selection.level}
+            onBack={handleBackFromSeatSelection}
+            onConfirmSeats={handleConfirmSeats}
+          />
+        ) : (
+          <>
+            <Navbar />
+            
+            <div className="container mx-auto px-4 py-8">
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/matches')}
+                className="mb-6 hover-lift animate-fade-in"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back to Matches
+              </Button>
 
-        {/* Match Header */}
-        <div className="glass-card rounded-2xl p-8 mb-8 animate-slide-up">
-          <div className="flex flex-col lg:flex-row gap-8">
-            <div className="flex-1">
-              <div className="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl mb-6 flex items-center justify-center">
-                <div className="text-center space-y-4">
-                  <div className="flex items-center justify-center gap-6">
-                    <span className="text-4xl font-bold gradient-text">{match.team1}</span>
-                    <span className="text-3xl text-muted-foreground">vs</span>
-                    <span className="text-4xl font-bold gradient-text">{match.team2}</span>
+              {/* Match Header */}
+              <div className="glass-card rounded-2xl p-8 mb-8 animate-slide-up">
+                <div className="flex flex-col lg:flex-row gap-8">
+                  <div className="flex-1">
+                    <div className="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 rounded-xl mb-6 flex items-center justify-center">
+                      <div className="text-center space-y-4">
+                        <div className="flex items-center justify-center gap-6">
+                          <span className="text-4xl font-bold gradient-text">{match.team1}</span>
+                          <span className="text-3xl text-muted-foreground">vs</span>
+                          <span className="text-4xl font-bold gradient-text">{match.team2}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <h1 className="text-3xl font-bold mb-4">{match.title}</h1>
+                    <div className="space-y-2 text-muted-foreground">
+                      <p className="text-lg">{formatDate(match.date)} • {match.time}</p>
+                      <p className="text-lg">{match.venue}, {match.stadium}</p>
+                    </div>
+                  </div>
+
+                  <div className="lg:w-96">
+                    <CountdownTimer targetDate={`${match.date}T${match.time}`} />
                   </div>
                 </div>
               </div>
-              
-              <h1 className="text-3xl font-bold mb-4">{match.title}</h1>
-              <div className="space-y-2 text-muted-foreground">
-                <p className="text-lg">{formatDate(match.date)} • {match.time}</p>
-                <p className="text-lg">{match.venue}, {match.stadium}</p>
+
+              <div className="grid lg:grid-cols-5 gap-8">
+                {/* Interactive Stadium Map */}
+                <div className="lg:col-span-3 animate-slide-up">
+                  <div className="glass-card rounded-2xl p-6 h-full hover-lift">
+                    <h2 className="text-2xl font-bold mb-6">Interactive Seat Layout</h2>
+                    <div className="w-full h-[500px] flex justify-center items-center">
+                      <StadiumMap 
+                        selectedGalleryId={selection.galleryId} 
+                        selectedLevel={selection.level}
+                        onGalleryClick={handleGalleryClick} 
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Booking Form */}
+                <div className="lg:col-span-2 animate-slide-up" style={{ animationDelay: '0.1s', animationFillMode: 'both' }}>
+                  <div className="glass-card rounded-2xl p-6 sticky top-24">
+                    <BookingForm 
+                      galleries={galleryData}
+                      selection={selection}
+                      onSelectionChange={handleSelectionChange}
+                      totalPrice={totalPrice}
+                      selectedGallery={selectedGallery}
+                      onProceedToPayment={handleProceedToPayment}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="lg:w-96">
-              <CountdownTimer targetDate={`${match.date}T${match.time}`} />
-            </div>
-          </div>
-        </div>
-
-        <div className="grid lg:grid-cols-5 gap-8">
-          {/* Interactive Stadium Map */}
-          <div className="lg:col-span-3 animate-slide-up">
-            <div className="glass-card rounded-2xl p-6 h-full hover-lift">
-              <h2 className="text-2xl font-bold mb-6">Interactive Seat Layout</h2>
-              <div className="w-full h-[500px] flex justify-center items-center">
-                <StadiumMap 
-                  selectedGalleryId={selection.galleryId} 
-                  selectedLevel={selection.level}
-                  onGalleryClick={handleGalleryClick} 
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Booking Form */}
-          <div className="lg:col-span-2 animate-slide-up" style={{ animationDelay: '0.1s', animationFillMode: 'both' }}>
-            <div className="glass-card rounded-2xl p-6 sticky top-24">
-              <BookingForm 
-                galleries={galleryData}
-                selection={selection}
-                onSelectionChange={handleSelectionChange}
-                totalPrice={totalPrice}
-                selectedGallery={selectedGallery}
-                onProceedToPayment={handleProceedToPayment}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <Footer />
+            <Footer />
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
