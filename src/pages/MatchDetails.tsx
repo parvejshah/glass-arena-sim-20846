@@ -31,6 +31,7 @@ const MatchDetails = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [showSeatSelection, setShowSeatSelection] = useState(false);
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
+  const [remainingTime, setRemainingTime] = useState<number>(300);
 
   useEffect(() => {
     const selectedGallery = galleryData.find(g => g.id === selection.galleryId);
@@ -102,14 +103,35 @@ const MatchDetails = () => {
   const handleBackFromSeatSelection = () => {
     setShowSeatSelection(false);
     setSelectedSeats([]);
+    // Scroll to stadium section
+    setTimeout(() => {
+      const stadiumSection = document.getElementById('stadium-section');
+      if (stadiumSection) {
+        stadiumSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
   };
 
-  const handleConfirmSeats = (seatIds: string[], calculatedPrice: number) => {
+  const handleConfirmSeats = (seatIds: string[], calculatedPrice: number, timeLeft: number) => {
     setSelectedSeats(seatIds);
     setSelection(prev => ({ ...prev, tickets: seatIds.length }));
     setTotalPrice(calculatedPrice);
-    setShowSeatSelection(false);
-    toast.success(`${seatIds.length} seat(s) reserved! Complete booking within 5 minutes.`);
+    setRemainingTime(timeLeft);
+    
+    // Navigate to payment page with timer
+    const selectedGallery = galleryData.find(g => g.id === selection.galleryId);
+    if (!selectedGallery) return;
+    
+    navigate('/payment', { 
+      state: { 
+        match, 
+        selection: { ...selection, tickets: seatIds.length },
+        selectedGallery,
+        totalPrice: calculatedPrice,
+        selectedSeats: seatIds,
+        remainingTime: timeLeft
+      } 
+    });
   };
 
   const handleProceedToPayment = () => {
@@ -183,7 +205,7 @@ const MatchDetails = () => {
 
               <div className="grid lg:grid-cols-5 gap-8">
                 {/* Interactive Stadium Map */}
-                <div className="lg:col-span-3 animate-slide-up">
+                <div id="stadium-section" className="lg:col-span-3 animate-slide-up">
                   <div className="glass-card rounded-2xl p-6 h-full hover-lift">
                     <h2 className="text-2xl font-bold mb-6">Interactive Seat Layout</h2>
                     <div className="w-full h-[500px] flex justify-center items-center">

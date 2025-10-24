@@ -11,8 +11,8 @@ import { toast } from 'sonner';
 const Payment = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { match, selection, selectedGallery, totalPrice } = location.state || {};
-  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
+  const { match, selection, selectedGallery, totalPrice, selectedSeats, remainingTime } = location.state || {};
+  const [timeLeft, setTimeLeft] = useState(remainingTime || 300);
 
   useEffect(() => {
     if (!match || !selectedGallery || !selection) {
@@ -67,9 +67,13 @@ const Payment = () => {
 
         <div className="max-w-4xl mx-auto">
           {/* Timer Alert */}
-          <div className="glass-card rounded-xl p-4 mb-6 border-warning/50 animate-fade-in">
-            <div className="flex items-center justify-center gap-2 text-warning">
-              <Clock className="w-5 h-5 animate-pulse" />
+          <div className={`glass-card rounded-xl p-4 mb-6 animate-fade-in transition-colors duration-300 ${
+            timeLeft < 60 ? 'border-destructive/50 bg-destructive/5' : 'border-warning/50'
+          }`}>
+            <div className={`flex items-center justify-center gap-2 ${
+              timeLeft < 60 ? 'text-destructive' : 'text-warning'
+            }`}>
+              <Clock className={`w-5 h-5 ${timeLeft < 60 ? 'animate-pulse' : ''}`} />
               <span className="font-semibold">
                 Time remaining: {minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}
               </span>
@@ -171,14 +175,22 @@ const Payment = () => {
                         <div className="font-medium">{selection.level}</div>
                       </div>
                       <div>
-                        <div className="text-xs text-muted-foreground mb-1">Block</div>
-                        <div className="font-medium">{selection.block}</div>
-                      </div>
-                      <div>
                         <div className="text-xs text-muted-foreground mb-1">Tickets</div>
                         <div className="font-medium">{selection.tickets}</div>
                       </div>
                     </div>
+                    {selectedSeats && selectedSeats.length > 0 && (
+                      <div className="mt-3">
+                        <div className="text-xs text-muted-foreground mb-1">Selected Seats</div>
+                        <div className="font-medium text-xs flex flex-wrap gap-1">
+                          {selectedSeats.map((seat: string, i: number) => (
+                            <span key={i} className="bg-primary/20 px-2 py-1 rounded">
+                              {seat.split('-').slice(-2).join('-')}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="border-t border-white/10 pt-4">

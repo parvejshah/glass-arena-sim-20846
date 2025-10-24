@@ -10,7 +10,7 @@ interface SeatSelectionViewProps {
   gallery: Gallery;
   selectedLevel: string;
   onBack: () => void;
-  onConfirmSeats: (seatIds: string[], totalPrice: number) => void;
+  onConfirmSeats: (seatIds: string[], totalPrice: number, remainingTime: number) => void;
 }
 
 // Generate mock seats for demonstration
@@ -107,7 +107,7 @@ export const SeatSelectionView = ({
       return;
     }
     const totalPrice = selectedSeats.length * gallery.price;
-    onConfirmSeats(selectedSeats, totalPrice);
+    onConfirmSeats(selectedSeats, totalPrice, timeLeft || 300);
   };
 
   const formatTime = (seconds: number) => {
@@ -118,18 +118,18 @@ export const SeatSelectionView = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.8 }}
-      transition={{ duration: 0.5, ease: [0.43, 0.13, 0.23, 0.96] }}
+      initial={{ opacity: 0, scale: 0.95, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95, y: -20 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="min-h-screen bg-background py-8"
     >
       <div className="container mx-auto px-4">
         {/* Header */}
         <motion.div
-          initial={{ y: -50, opacity: 0 }}
+          initial={{ y: -30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.15, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="mb-8"
         >
           <Button
@@ -170,9 +170,9 @@ export const SeatSelectionView = ({
 
         {/* Legend */}
         <motion.div
-          initial={{ y: -30, opacity: 0 }}
+          initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.25, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="flex justify-center gap-6 mb-8 flex-wrap"
         >
           <div className="flex items-center gap-2">
@@ -195,9 +195,9 @@ export const SeatSelectionView = ({
 
         {/* Seat Grid */}
         <motion.div
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4 }}
+          initial={{ y: 40, opacity: 0, scale: 0.98 }}
+          animate={{ y: 0, opacity: 1, scale: 1 }}
+          transition={{ delay: 0.35, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="bg-card rounded-lg p-6 mb-6"
         >
           <SeatGrid
@@ -212,9 +212,10 @@ export const SeatSelectionView = ({
         <AnimatePresence>
           {selectedSeats.length > 0 && (
             <motion.div
-              initial={{ y: 100, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 100, opacity: 0 }}
+              initial={{ y: 100, opacity: 0, scale: 0.95 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: 100, opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
               className="fixed bottom-0 left-0 right-0 bg-card border-t shadow-lg p-4"
             >
               <div className="container mx-auto flex items-center justify-between">
